@@ -1,10 +1,23 @@
 import express from 'express';
+import cors from 'cors'
+import subjectsRouter from './routes/subjects'
 
 const app = express();
 const PORT = 8000;
 
+if (!process.env.FRONTEND_URL) throw new Error('FRONTEND_URL is not defined in .env file');
+
+
+// Middleware
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}))
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+app.use('/api/subjects', subjectsRouter)
 
 // Root route
 app.get('/', (req, res) => {
