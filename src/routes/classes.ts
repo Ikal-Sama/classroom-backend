@@ -36,9 +36,12 @@ router.get('/', async (req, res) => {
         const offset = (currentPage - 1) * limitPerPage;
 
         const filterConditions = [];
-
+        const validStatuses = new Set(['active', 'inactive', 'archived'] as const);
         if (status && status !== 'all') {
-            filterConditions.push(eq(classes.status, status as any));
+            if (typeof status !== 'string' || !validStatuses.has(status as 'active' | 'inactive' | 'archived')) {
+                return res.status(400).json({ error: 'Invalid status filter' });
+            }
+            filterConditions.push(eq(classes.status, status as 'active' | 'inactive' | 'archived'))
         }
 
         if (teacher) {
@@ -78,7 +81,12 @@ router.get('/', async (req, res) => {
             .select({
                 ...getTableColumns(classes),
                 subject: getTableColumns(subjects),
-                teacher: getTableColumns(user)
+                teacher: {
+                    id: user.id,
+                    name: user.name,
+                    image: user.image,
+                    role: user.role
+                }
             })
             .from(classes)
             .leftJoin(subjects, eq(classes.subjectId, subjects.id))
