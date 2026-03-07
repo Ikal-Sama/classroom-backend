@@ -3,17 +3,15 @@ AgentAPI.config();
 
 import express from 'express';
 import cors from 'cors'
-import subjectsRouter from './routes/subjects'
-import securityMiddleware from './middleware/security';
+import subjectsRouter from './routes/subjects.js'
+import securityMiddleware from './middleware/security.js';
 import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth';
 
 const app = express();
 const PORT = 8000;
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not defined in .env file');
-}
+
 if (!process.env.FRONTEND_URL) throw new Error('FRONTEND_URL is not defined in .env file');
 
 
