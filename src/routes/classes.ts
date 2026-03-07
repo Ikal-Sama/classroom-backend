@@ -46,7 +46,10 @@ router.get('/', async (req, res) => {
         }
 
         if (subject) {
-            filterConditions.push(eq(classes.subjectId, Number(subject)));
+            const subjectId = Number(subject);
+            if (Number.isFinite(subjectId) && subjectId > 0) {
+                filterConditions.push(eq(classes.subjectId, subjectId));
+            }
         }
 
         if (search) {
