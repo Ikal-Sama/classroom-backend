@@ -74,4 +74,26 @@ router.get('/', async (req, res) => {
     }
 })
 
+router.post('/', async (req, res) => {
+    try {
+        const { name, code, description, departmentId } = req.body;
+
+        if (!name || !code || !description || !departmentId) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const subject = await db.insert(subjects).values({
+            name,
+            code,
+            description,
+            departmentId
+        }).returning();
+
+        res.status(201).json({ data: subject[0] });
+    } catch (error) {
+        console.error(`POST /subjects error: ${error}`);
+        return res.status(500).json({ error: 'Internal server error, Failed to create subject' });
+    }
+})
+
 export default router;
